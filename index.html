@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Opening DramaBox...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #0d0d0d; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .card { text-align: center; padding: 40px; width: 90%; }
+    .logo { width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, #e91e8c, #9c27b0); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 36px; }
+    h1 { font-size: 22px; margin-bottom: 10px; }
+    p { font-size: 15px; color: #aaa; margin-bottom: 32px; }
+    .spinner { width: 36px; height: 36px; border: 3px solid rgba(233,30,140,0.2); border-top-color: #e91e8c; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 24px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn { display: inline-block; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; width: 100%; margin-bottom: 12px; }
+    .btn-primary { background: linear-gradient(135deg, #e91e8c, #9c27b0); color: #fff; }
+    .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🎬</div>
+  <div id="loading-state">
+    <h1>Opening DramaBox</h1>
+    <div class="spinner"></div>
+    <p>Launching app...</p>
+  </div>
+  <div id="fallback-state" class="hidden">
+    <h1>Get DramaBox</h1>
+    <p>Install the app to watch this reel.</p>
+    <a id="playstore-btn" href="#" class="btn btn-primary">Download on Play Store</a>
+    <a id="open-btn" href="#" class="btn btn-secondary">Already installed? Open App</a>
+  </div>
+</div>
+<script>
+  (function () {
+    const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.myapp.demo';
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get('bookId');
+    const chapterIndex = params.get('chapterIndex') || '0';
+    const appDeepLink = `dramabox://open?bookId=${encodeURIComponent(bookId)}&chapterIndex=${encodeURIComponent(chapterIndex)}`;
+    
+    document.getElementById('playstore-btn').href = PLAY_STORE_URL;
+    document.getElementById('open-btn').href = appDeepLink;
 
+    if (!bookId) { window.location.href = PLAY_STORE_URL; return; }
+
+    window.location.href = appDeepLink;
+    setTimeout(() => {
+      document.getElementById('loading-state').classList.add('hidden');
+      document.getElementById('fallback-state').classList.remove('hidden');
+    }, 2500);
+  })();
+</script>
+</body>
+</html>
