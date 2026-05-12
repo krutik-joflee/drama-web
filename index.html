@@ -1,58 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Opening DramaBox...</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, sans-serif; background: #0d0d0d; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-    .card { text-align: center; padding: 40px; width: 90%; }
-    .logo { width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, #e91e8c, #9c27b0); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 36px; }
-    h1 { font-size: 22px; margin-bottom: 10px; }
-    p { font-size: 15px; color: #aaa; margin-bottom: 32px; }
-    .spinner { width: 36px; height: 36px; border: 3px solid rgba(233,30,140,0.2); border-top-color: #e91e8c; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 24px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .btn { display: inline-block; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; width: 100%; margin-bottom: 12px; }
-    .btn-primary { background: linear-gradient(135deg, #e91e8c, #9c27b0); color: #fff; }
-    .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
-    .hidden { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DramaBox - Opening...</title>
+    <!-- Use a modern font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff0050;
+            --bg: #0a0a0a;
+            --text: #ffffff;
+            --text-secondary: #a0a0a0;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 400px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .logo-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+        }
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+        .logo-circle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), #ff4d8d);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(255, 0, 80, 0.4);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 { font-size: 1.8rem; margin: 0 0 10px; font-weight: 600; letter-spacing: -0.5px; }
+        p { color: var(--text-secondary); font-size: 1rem; line-height: 1.5; margin-bottom: 30px; }
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary), #ff4d8d);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 0, 80, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 0, 80, 0.4);
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        /* Smooth fade-in animation */
+        .container {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-<div class="card">
-  <div class="logo">🎬</div>
-  <div id="loading-state">
-    <h1>Opening DramaBox</h1>
-    <div class="spinner"></div>
-    <p>Launching app...</p>
-  </div>
-  <div id="fallback-state" class="hidden">
-    <h1>Get DramaBox</h1>
-    <p>Install the app to watch this reel.</p>
-    <a id="playstore-btn" href="#" class="btn btn-primary">Download on Play Store</a>
-    <a id="open-btn" href="#" class="btn btn-secondary">Already installed? Open App</a>
-  </div>
-</div>
-<script>
-  (function () {
-    const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.myapp.demo';
-    const params = new URLSearchParams(window.location.search);
-    const bookId = params.get('bookId');
-    const chapterIndex = params.get('chapterIndex') || '0';
-    const appDeepLink = `dramabox://open?bookId=${encodeURIComponent(bookId)}&chapterIndex=${encodeURIComponent(chapterIndex)}`;
-    
-    document.getElementById('playstore-btn').href = PLAY_STORE_URL;
-    document.getElementById('open-btn').href = appDeepLink;
+    <div class="container">
+        <div class="logo-container">
+            <div class="loader"></div>
+            <div class="logo-circle">D</div>
+        </div>
+        <h1>Opening DramaBox</h1>
+        <p>Wait a moment while we take you to the reel...</p>
+        <a id="redirect-btn" href="#" class="btn">Open Manually</a>
+    </div>
 
-    if (!bookId) { window.location.href = PLAY_STORE_URL; return; }
+    <script>
+        // Configuration
+        const packageName = 'com.myapp.demo'; 
+        const appScheme = 'dramabox';
+        const playStoreUrl = `https://play.google.com/store/apps/details?id=${packageName}`;
+        
+        // Parse Query Parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('bookId');
+        const chapterIndex = urlParams.get('chapterIndex') || '0';
+        
+        if (!bookId) {
+            // Fallback if no bookId provided
+            window.location.href = playStoreUrl;
+        }
 
-    window.location.href = appDeepLink;
-    setTimeout(() => {
-      document.getElementById('loading-state').classList.add('hidden');
-      document.getElementById('fallback-state').classList.remove('hidden');
-    }, 2500);
-  })();
-</script>
+        // Deep Link URIs
+        const appUri = `${appScheme}://open?bookId=${bookId}&chapterIndex=${chapterIndex}`;
+        
+        // For Android: Intent URL is the most robust way to handle "Not Installed" fallback
+        // Chrome and other Android browsers will automatically follow browser_fallback_url if the app isn't found.
+        const intentUrl = `intent://open?bookId=${bookId}&chapterIndex=${chapterIndex}#Intent;scheme=${appScheme};package=${packageName};S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`;
+
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isAndroid = /android/i.test(userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+        // Update Button Link
+        const redirectUrl = isAndroid ? intentUrl : appUri;
+        document.getElementById('redirect-btn').href = redirectUrl;
+
+        function doRedirect() {
+            if (isAndroid) {
+                // Android handles everything via Intent URL
+                window.location.href = intentUrl;
+            } else if (isIOS) {
+                // iOS logic: Try to open app, fallback to store if it doesn't open
+                window.location.href = appUri;
+                setTimeout(() => {
+                    // Replace with actual App Store link if available
+                    window.location.href = playStoreUrl; 
+                }, 2500);
+            } else {
+                // Desktop fallback
+                window.location.href = playStoreUrl;
+            }
+        }
+
+        // Start redirection process
+        window.onload = () => {
+            setTimeout(doRedirect, 500); // Small delay for visual effect
+        };
+    </script>
 </body>
 </html>
